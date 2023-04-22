@@ -119,11 +119,13 @@ def get_page_id(poll_result):
 
 def update_poll_results(poll_result):
     resp = get_page_id(poll_result)
+    logging.info("response from get page id - {}".format(resp))
 
     if resp["Status"] != "Success":
         logging.error("Not able to find the corresponding entry for poll. Exiting....")
         return "Not Ok"
     try:
+        logging.info("here1")
         page_id = resp["page_id"]
         url = "https://api.notion.com/v1/pages/{}".format(page_id)
         logging.info("page id - {}".format(page_id))
