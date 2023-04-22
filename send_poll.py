@@ -134,7 +134,7 @@ def register_events(poll_data, notion_token, location_ids, db_id):
 
         logging.info("Saving the location ids in the file...")
         poll_to_event_df = pd.read_csv(os.path.join(cwd, "poll_to_events.csv"), dtype=str)
-        logging.info("Adding the row - {}".format([poll_id] + [loc for loc in location_ids] + ["" * (poll_to_event_df.shape[1] - len(location_ids))]))
+        logging.info("Adding the row - {}".format([poll_id] + [loc for loc in location_ids] + [""] * ((poll_to_event_df.shape[1] - 1) - len(location_ids))))
         poll_to_event_df.loc[len(poll_to_event_df.index)] = [poll_id] + [loc for loc in location_ids] + [""] * ((poll_to_event_df.shape[1] - 1) - len(location_ids))
         poll_to_event_df.to_csv(os.path.join(cwd, "poll_to_events.csv"), index=False)
     except Exception as e:
