@@ -118,6 +118,7 @@ def get_page_id(poll_result):
 
 
 def update_poll_results(poll_result):
+    logging.info("Starting the execution of update poll results method....")
     resp = get_page_id(poll_result)
     logging.info("response from get page id - {}".format(resp))
 
