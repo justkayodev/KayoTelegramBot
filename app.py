@@ -52,8 +52,8 @@ def handle_update():
             # If update is for result count
             if "poll" in data and "total_voter_count" in data["poll"]:
                 logging.info("Calling method to update latest results...")
-                update_poll_results(data)
-
+                response = update_poll_results(data)
+                logging.info("Response from update poll rresults - {}".format(response))
             # If update is for user details poll option was selected by
             elif "poll_answer" in data and "option_ids" in data["poll_answer"]:
                 if len(data["poll_answer"]["option_ids"]) > 0:
@@ -153,6 +153,8 @@ def update_poll_results(poll_result):
         logging.info("Response from update entry api call - {}".format(resp.json()))
     except Exception as e:
         logging.error("Unable to update poll results in db. Error - {}".format(e))
+        import traceback
+        traceback.print_exc()
 
     return resp
 
