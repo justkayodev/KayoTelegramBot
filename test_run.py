@@ -58,7 +58,7 @@ def main():
         print("Required locations count is not same as the ones we received.")
     else:
         print("Count: OK")
-        print("Location IDs - {}".format(location_ids))
+        print("Location IDs - {}".format(sorted(location_ids, key=lambda x: int(x.split('_')[-1]))))
 
 if __name__=="__main__":
     main()
