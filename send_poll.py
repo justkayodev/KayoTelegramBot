@@ -106,12 +106,18 @@ def register_events(poll_data, notion_token, location_ids, db_id):
         "Notion-Version": "2022-06-28"
     }
 
-    data = {
-        "Poll ID": {"title": [{"text": {"content": poll_id}}]},
-        "Kayo Event 1": {"rich_text": [{"text": {"content": location_ids[0]}}]},
-        "Kayo Event 2": {"rich_text": [{"text": {"content": location_ids[1]}}]},
-        "Kayo Event 3": {"rich_text": [{"text": {"content": location_ids[2]}}]},
-    }
+    # data = {
+    #     "Poll ID": {"title": [{"text": {"content": poll_id}}]},
+    #     "Kayo Event 1": {"rich_text": [{"text": {"content": location_ids[0]}}]},
+    #     "Kayo Event 2": {"rich_text": [{"text": {"content": location_ids[1]}}]},
+    #     "Kayo Event 3": {"rich_text": [{"text": {"content": location_ids[2]}}]},
+    # }
+
+    data = {"Poll ID": {"title": [{"text": {"content": poll_id}}]}}
+    data.update({
+        "Kayo Event {}".format(i+1): {"rich_text": [{"text": {"content": location_ids[i]}}]} for i in range(len(location_ids))
+    })
+    logging.info("Initial payload - {}".format(data))
 
     payload = {
         "parent": {
@@ -126,7 +132,7 @@ def register_events(poll_data, notion_token, location_ids, db_id):
 
         logging.info("Saving the location ids in the file...")
         poll_to_event_df = pd.read_csv(os.path.join(cwd, "poll_to_events.csv"), dtype=str)
-        poll_to_event_df.loc[len(poll_to_event_df.index)] = [poll_id, location_ids[0], location_ids[1], location_ids[2]]
+        poll_to_event_df.loc[len(poll_to_event_df.index)] = [poll_id] + [loc for loc in location_ids] + ["" * (poll_to_event_df.shape[1] - len(location_ids))]
         poll_to_event_df.to_csv(os.path.join(cwd, "poll_to_events.csv"), index=False)
     except Exception as e:
         logging.error("Unable to register the poll events in notion or save in file. Error - {}".format(e))
