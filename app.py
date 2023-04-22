@@ -18,7 +18,7 @@ bot_token = os.getenv("API_KEY")
 chat_id = os.getenv("CHANNEL_ID")
 poll_result_dbid = os.getenv("POLL_RESULT_DB_ID")
 poll_det_result_dbid = os.getenv("POLL_DET_RESULT_DB_ID")
-locations_cnt = os.getenv("LOCATIONS_COUNT") 
+locations_cnt = int(os.getenv("LOCATIONS_COUNT"))
 
 notion_headers = {
     "Authorization": "Bearer " + os.getenv("NOTION_TOKEN"),
