@@ -57,6 +57,8 @@ def process_img(img, pattern):
         location_ids = re.findall(pattern, text)
         location_ids = [id.replace(" ", "_") for id in location_ids]
         logging.info("Found the location ids - {}".format(location_ids))
+        location_ids = sorted(location_ids, key=lambda x: int(x.split('_')[-1]))
+        logging.info("Ids after sorting - {}".format(location_ids))
     except Exception as e:
         logging.error("Unable to process image. Error - {}".format(e))
     return location_ids
