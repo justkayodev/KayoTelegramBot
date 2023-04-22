@@ -126,10 +126,12 @@ def update_poll_results(poll_result):
     try:
         page_id = resp["page_id"]
         url = "https://api.notion.com/v1/pages/{}".format(page_id)
-
+        logging.info("page id - {}".format(page_id))
+        logging.info("poll results - {}".format(poll_result))
         # location_1_votes = poll_result["poll"]["options"][0]["voter_count"]
         # location_2_votes = poll_result["poll"]["options"][1]["voter_count"]
         # location_3_votes = poll_result["poll"]["options"][2]["voter_count"]
+        logging.info("here")
         status = "Closed" if poll_result["poll"]["is_closed"] else "Open"
 
         # data = {
