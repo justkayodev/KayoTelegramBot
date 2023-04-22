@@ -138,10 +138,10 @@ def update_poll_results(poll_result):
         #     "Kayo Event 3": {"number": location_3_votes},
         #     "Status": {"select": {"name": status}}
         # }
-
+        logging.info("Preparing initial payload")
         data = {"Kayo Event {}".format(i+1): {"number": poll_result["poll"]["options"][i]["voter_count"]} for i in range(0, locations_cnt)}
         data.update({"Status": {"select": {"name": status}}})
-        logging.info("Payload - {}".format(data))
+        logging.info("Update Poll Results - Initial Payload - {}".format(data))
 
         payload = {"properties": data}
         resp = requests.patch(url, json=payload, headers=notion_headers)
