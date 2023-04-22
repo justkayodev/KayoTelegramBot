@@ -18,6 +18,7 @@ bot_token = os.getenv("API_KEY")
 chat_id = os.getenv("CHANNEL_ID")
 poll_result_dbid = os.getenv("POLL_RESULT_DB_ID")
 poll_det_result_dbid = os.getenv("POLL_DET_RESULT_DB_ID")
+locations_cnt = os.getenv("LOCATIONS_COUNT") 
 
 notion_headers = {
     "Authorization": "Bearer " + os.getenv("NOTION_TOKEN"),
@@ -126,18 +127,21 @@ def update_poll_results(poll_result):
         page_id = resp["page_id"]
         url = "https://api.notion.com/v1/pages/{}".format(page_id)
 
-        location_1_votes = poll_result["poll"]["options"][0]["voter_count"]
-        location_2_votes = poll_result["poll"]["options"][1]["voter_count"]
-        location_3_votes = poll_result["poll"]["options"][2]["voter_count"]
+        # location_1_votes = poll_result["poll"]["options"][0]["voter_count"]
+        # location_2_votes = poll_result["poll"]["options"][1]["voter_count"]
+        # location_3_votes = poll_result["poll"]["options"][2]["voter_count"]
         status = "Closed" if poll_result["poll"]["is_closed"] else "Open"
 
-        data = {
-            "Kayo Event 1": {"number": location_1_votes},
-            "Kayo Event 2": {"number": location_2_votes},
-            "Kayo Event 3": {"number": location_3_votes},
-            "Status": {"select": {"name": status}}
-        }
+        # data = {
+        #     "Kayo Event 1": {"number": location_1_votes},
+        #     "Kayo Event 2": {"number": location_2_votes},
+        #     "Kayo Event 3": {"number": location_3_votes},
+        #     "Status": {"select": {"name": status}}
+        # }
 
+        data = {"Kayo Event {}".format(i+1): {"number": poll_result["poll"]["options"][i]["voter_count"]} for i in range(0, locations_cnt)}
+        data.update({"Status": {"select": {"name": status}}})
+        
         payload = {"properties": data}
         resp = requests.patch(url, json=payload, headers=notion_headers)
         logging.info("Response from update entry api call - {}".format(resp.json()))
