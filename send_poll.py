@@ -22,7 +22,7 @@ logging.basicConfig(filename='{}/app.log'.format(cwd), format='%(asctime)s - %(n
 
 today = datetime.today()
 
-def send_location_img(image, bot_token, channel_id, caption=""):
+def send_img(image, bot_token, channel_id, caption=""):
     url = "https://api.telegram.org/bot{}/sendPhoto".format(bot_token)
 
     resp = {}
@@ -204,12 +204,12 @@ def main():
         return {"Status": "Failure"}
     
 
-    ann_img_send_result = send_location_img(image, bot_token, channel_id)
+    ann_img_send_result = send_img(img_name_ann, bot_token, channel_id)
 
     hh, mm, ss = wait_time_ann.split("-")
     time.sleep(int(hh) * 3600 + int(mm) * 60 + int(ss))
 
-    img_send_result = send_location_img(image, bot_token, channel_id, caption)
+    img_send_result = send_img(image, bot_token, channel_id, caption)
 
     if img_send_result["Status"] != "Success":
         logging.error("Bot was unable to send the image. Exiting the flow....")
