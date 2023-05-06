@@ -12,12 +12,16 @@ cwd = os.getenv("PROJECT_DIR")
 
 today = datetime.today()
 
-def fetch_image(image_url, image_loc, image_name):
+def fetch_image(image_url, image_url_ann, image_loc, image_name, image_name_ann):
     logging.info("Making the call to download the image.")
     try:
         resp = requests.get(image_url, allow_redirects=True)
+        resp_img_ann = requests.get(image_url_ann, allow_redirects=True)
+
         with open("{}{}.png".format(os.path.join(cwd, image_loc, image_name), today.strftime("%Y-%m-%d")), 'wb') as outfile:
             outfile.write(resp.content)
+        with open("{}{}.png".format(os.path.join(cwd, image_loc, image_name_ann), today.strftime("%Y-%m-%d")), 'wb') as outfile:
+            outfile.write(resp_img_ann.content)
     except Exception as e:
         logging.error("Unable to download the image. Error - {}".format(e))
         return {"Status": "Failure"}
@@ -57,22 +61,24 @@ def pull_data(database_id):
         else:
             return {"Status": "Failure"}
 
-        image_url = resp_json["results"][0]["properties"]["Images"]["files"][0]["file"]["url"]
+        image_url_location = resp_json["results"][0]["properties"]["Images"]["files"][0]["file"]["url"]
+        image_url_announce = resp_json["results"][0]["properties"]["Announcement"]["files"][0]["file"]["url"]
     except Exception as e:
         logging.error("Unable to pull image data for today from locations DB. Error - {}".format(e))
         return {"Status": "Failure"}
 
-    return {"Status": "Success", "URL": image_url}
+    return {"Status": "Success", "URL_Location": image_url_location, "URL_Announcement": image_url_announce}
 
 
 def initiate_data_pull():
     database_id = os.getenv("IMAGES_DB_ID")
     image_loc = os.getenv("IMAGE_LOCATION")
     image_name = os.getenv("IMAGE_NAME")
+    image_name_ann = os.getenv("IMAGE_NAME_ANN")
 
     data = pull_data(database_id)
-    if "URL" in data:
-        response = fetch_image(data["URL"], image_loc, image_name)
+    if ("URL_Location" in data) and ("URL_Announcement" in data):
+        response = fetch_image(data["URL_Location"], data["URL_Announcement"], image_loc, image_name, image_name_ann)
     else:
         logging.error("Unable to get the url of the image from the locatons database. Thus exiting the flow.")
         return {"Status": "Failure"}

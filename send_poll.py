@@ -22,7 +22,7 @@ logging.basicConfig(filename='{}/app.log'.format(cwd), format='%(asctime)s - %(n
 
 today = datetime.today()
 
-def send_location_img(image, caption, bot_token, channel_id):
+def send_location_img(image, bot_token, channel_id, caption=""):
     url = "https://api.telegram.org/bot{}/sendPhoto".format(bot_token)
 
     resp = {}
@@ -176,11 +176,11 @@ def send_poll(bot_token, channel_id, location_ids, poll_q, notion_token, poll_re
     
 
 def main():
-    img_name, img_loc = os.getenv("IMAGE_NAME"), os.getenv("IMAGE_LOCATION")
+    img_name, img_name_ann, img_loc = os.getenv("IMAGE_NAME"), os.getenv("IMAGE_NAME_ANN"), os.getenv("IMAGE_LOCATION")
     locations_count, pattern = os.getenv("LOCATIONS_COUNT"), os.getenv("PATTERN")
     caption, poll_q = os.getenv("IMAGE_CAPTION"), os.getenv("POLL_Q")
     bot_token, channel_id = os.getenv("API_KEY"), os.getenv("CHANNEL_ID")
-    wait_time, poll_duration = os.getenv("WAIT_TIME"), os.getenv("POLL_DURATION")
+    wait_time, poll_duration, wait_time_ann = os.getenv("WAIT_TIME"), os.getenv("POLL_DURATION"), os.getenv("WAIT_TIME_ANN")
     venv, code_loc = os.getenv("VENV"), os.getenv("STOP_POLL_CODE")
     poll_results_dbid, notion_token, poll_to_event_dbid = os.getenv("POLL_RESULT_DB_ID"), os.getenv("NOTION_TOKEN"), os.getenv("POLL_TO_EVENT_DBID")
 
@@ -191,8 +191,9 @@ def main():
         return data_pull_resp
 
     image = "{}{}.png".format(os.path.join(cwd, img_loc, img_name), today.strftime("%Y-%m-%d"))
+    image_ann = "{}{}.png".format(os.path.join(cwd, img_loc, img_name_ann), today.strftime("%Y-%m-%d"))
 
-    if (not os.path.exists(image)) or (data_pull_resp["Status"] != "Success"):
+    if (not (os.path.exists(image) and os.path.exists(image_ann))) or (data_pull_resp["Status"] != "Success"):
         logging.error("Image file not found. Exiting the flow....")
         return {"Status": "Failure"}
     
@@ -201,8 +202,14 @@ def main():
     if len(location_ids) != int(locations_count):
         logging.error("Required locations count is not same as the ones we received. Exiting the flow....")
         return {"Status": "Failure"}
+    
 
-    img_send_result = send_location_img(image, caption, bot_token, channel_id)
+    ann_img_send_result = send_location_img(image, bot_token, channel_id)
+
+    hh, mm, ss = wait_time_ann.split("-")
+    time.sleep(int(hh) * 3600 + int(mm) * 60 + int(ss))
+
+    img_send_result = send_location_img(image, bot_token, channel_id, caption)
 
     if img_send_result["Status"] != "Success":
         logging.error("Bot was unable to send the image. Exiting the flow....")
