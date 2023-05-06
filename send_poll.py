@@ -204,7 +204,7 @@ def main():
         return {"Status": "Failure"}
     
 
-    ann_img_send_result = send_img(img_name_ann, bot_token, channel_id)
+    ann_img_send_result = send_img(image_ann, bot_token, channel_id)
 
     hh, mm, ss = wait_time_ann.split("-")
     time.sleep(int(hh) * 3600 + int(mm) * 60 + int(ss))
