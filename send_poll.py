@@ -108,13 +108,6 @@ def register_events(poll_data, notion_token, location_ids, db_id):
         "Notion-Version": "2022-06-28"
     }
 
-    # data = {
-    #     "Poll ID": {"title": [{"text": {"content": poll_id}}]},
-    #     "Kayo Event 1": {"rich_text": [{"text": {"content": location_ids[0]}}]},
-    #     "Kayo Event 2": {"rich_text": [{"text": {"content": location_ids[1]}}]},
-    #     "Kayo Event 3": {"rich_text": [{"text": {"content": location_ids[2]}}]},
-    # }
-
     data = {"Poll ID": {"title": [{"text": {"content": poll_id}}]}}
     data.update({
         "Kayo Event {}".format(i+1): {"rich_text": [{"text": {"content": location_ids[i]}}]} for i in range(len(location_ids))
