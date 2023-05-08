@@ -206,11 +206,12 @@ def main():
 
     if img_send_result["Status"] != "Success":
         logging.error("Bot was unable to send the image. Exiting the flow....")
-        return
+        return 
 
     hh, mm, ss = wait_time.split("-")
     time.sleep(int(hh) * 3600 + int(mm) * 60 + int(ss))
 
+    logging.info("Sending out poll....")
     send_poll_resp = send_poll(bot_token, channel_id, location_ids, poll_q, notion_token, poll_results_dbid, poll_to_event_dbid)
 
     if send_poll_resp["Status"] != "Success":
